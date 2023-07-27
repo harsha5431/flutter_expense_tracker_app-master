@@ -10,6 +10,7 @@ import 'package:flutter_expense_tracker_app/models/transaction.dart';
 import 'package:flutter_expense_tracker_app/views/screens/add_transaction_screen.dart';
 import 'package:flutter_expense_tracker_app/views/screens/all_transactions_screen.dart';
 import 'package:flutter_expense_tracker_app/views/screens/chart_screen.dart';
+import 'package:flutter_expense_tracker_app/views/screens/generate_report.dart';
 import 'package:flutter_expense_tracker_app/views/screens/pdf_viewer.dart';
 import 'package:flutter_expense_tracker_app/views/widgets/income_expense.dart';
 import 'package:flutter_expense_tracker_app/views/widgets/placeholder_info.dart';
@@ -165,94 +166,8 @@ class HomeScreen extends StatelessWidget {
                     )
                   : SizedBox(),
               Divider(color: Colors.red,),
-              ElevatedButton(onPressed: () async {
-                print("Button pressed..");
-
-                // PermissionStatus permissionResult = await Permission.manageExternalStorage
-                //     .request();
-                // print("permissionResult: ${permissionResult}");
-                //
-                // if (!await Permission.manageExternalStorage.isGranted) {
-                //   print("NO PERMISSION");
-                //   return;
-                // } else {
-                //   print("PERMISSION");
-                // }
-
-
-                // Create a new PDF document.
-                final PdfDocument document = PdfDocument();
-                // Add a PDF page and draw text.
-                final PdfPage page = document.pages.add();
-                final PdfGrid grid = PdfGrid();
-                grid.columns.add(count: 7);
-
-                final PdfGridRow headerRow = grid.headers.add(1)[0];
-                headerRow.style.font = PdfStandardFont(PdfFontFamily.helvetica, 10, style: PdfFontStyle.bold);
-
-                headerRow.cells[0].value = 'Type';
-                headerRow.cells[1].value = 'Name';
-                headerRow.cells[2].value = 'Amount';
-                headerRow.cells[3].value = 'Date';
-                headerRow.cells[4].value = 'Time';
-                headerRow.cells[5].value = 'Category';
-                headerRow.cells[6].value = 'Mode';
-
-                for (TransactionModel transactionModel in _homeController.myTransactions) {
-                  // Add rows to the grid.
-                  PdfGridRow row = grid.rows.add();
-                  row.cells[0].value = transactionModel.type;
-                  row.cells[1].value = transactionModel.name;
-                  row.cells[2].value = transactionModel.amount;
-                  row.cells[3].value = transactionModel.date;
-                  row.cells[4].value = transactionModel.time;
-                  row.cells[5].value = transactionModel.category;
-                  row.cells[6].value = transactionModel.mode;
-                }
-
-                grid.style.cellPadding = PdfPaddings(left: 5, top: 5);
-                grid.draw(
-                  page: page,
-                  bounds: Rect.fromLTWH(
-                    0, 0, page.getClientSize().width, page.getClientSize().height
-                  )
-                );
-
-                final List<int> bytes = await document.save();
-                // Dispose the document.
-                document.dispose();
-
-                // Save the document.
-                // File('HelloWorld.pdf').writeAsBytes(await document.save());
-
-                //Get external storage directory
-                // Directory directory = (await getApplicationDocumentsDirectory());
-                Directory? directory = (await getExternalStorageDirectories(type: StorageDirectory.downloads))?.first;
-
-                if (directory == null) {
-                  return;
-                }
-                //Get directory path
-                // String path = directory.path;
-                String path = "/storage/emulated/0/Download";
-                print("PATH: ${path}");
-
-                //Create an empty file to write PDF data
-                File file = File('$path/Output.pdf');
-                //Write PDF data
-                await file.writeAsBytes(bytes, flush: true);
-                //Open the PDF document in mobile
-                // OpenFile.open('$path/Output.pdf');
-                Get.snackbar(
-                  "File Downloaded",
-                  "The file has been downloaded and stored in downloads folder",
-                  snackPosition: SnackPosition.BOTTOM,
-                  colorText: Colors.white,
-                  borderRadius: 10,
-                  backgroundColor: Colors.green.withOpacity(0.5),
-                );
-                Get.to(() => PDFViewer(path: "$path/Output.pdf"));
-
+              ElevatedButton(onPressed: () {
+                Get.to(() => GenerateReport());
               }, child: Text("Generate Report"))
             ],
           ),

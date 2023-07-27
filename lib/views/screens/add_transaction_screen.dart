@@ -82,6 +82,7 @@ class AddTransactionScreen extends StatelessWidget {
                 controller: _nameController,
               ),
               InputField(
+                isAmount: true,
                 hint: 'Enter transaction amount',
                 label: 'Transaction Amount',
                 controller: _amountController,
